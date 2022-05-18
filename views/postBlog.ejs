@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        var title, text, author;
+        $("#submit").click(function () {
+          title = $("#title").val();
+          text = $("#text").val();
+          author = $("#author").val();
+          $.post(
+            "http://localhost:4000/blogs/submit",
+            { title: title, text: text, author: author }
+          );
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <h1>Add New Blog</h1>
+    <label>Blog Title</label>
+    <input id="title" size="40" type="text" />
+    <label>Blog Text</label>
+    <input id="text" size="300" type="text" />
+    <label>Blog Author</label>
+    <input id="author" size="40" type="text" />
+    <input id="submit" type="button" value="Submit" />
+  </body>
+</html>
