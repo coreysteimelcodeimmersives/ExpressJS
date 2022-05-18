@@ -9,11 +9,13 @@ router.get('/', function(req, res, next) {
     res.render('blogs', {title: 'Blogs'});
 });
 
+// QUERY PARAM
 router.get('/all', function(req, res){
     let sort = req.query.sort;
     res.json(sortBlogs(sort));
 });
 
+// ROUTE PARAM
 router.get('/get-by-id/:blogId', (req, res) => {
     console.log(req.params);
     const blogId = req.params.blogId;
@@ -21,16 +23,18 @@ router.get('/get-by-id/:blogId', (req, res) => {
     res.json(findBlogId(blogId));
   });
 
-module.exports = router;
-
 /* HELPER FUNCTION */
 let findBlogId = (id) => {
-    for (let i = 0; i < blogPosts.length; i++){
-        let blog = blogPosts[i];
-        if (blog.id === id){
-            return blog;
-        }
-    }
+
+    // ANONYMOUS FUNCTION
+    const foundBlog = blogPosts.find(blog => blog.id === id);
+    return foundBlog;
+    // for (let i = 0; i < blogPosts.length; i++){
+    //     let blog = blogPosts[i];
+    //     if (blog.id === id){
+    //         return blog;
+    //     }
+    // }
 };
 
 let sortBlogs = (order) => {
@@ -43,3 +47,5 @@ let sortBlogs = (order) => {
     }
     
 }
+
+module.exports = router;
