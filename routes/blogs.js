@@ -45,7 +45,6 @@ let sortBlogs = (order) => {
     } else {
         return blogPosts;
     }
-    
 }
 
 module.exports = router;
