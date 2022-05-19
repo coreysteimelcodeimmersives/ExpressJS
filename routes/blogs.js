@@ -17,26 +17,45 @@ router.get('/all', function (req, res) {
     res.json(sortBlogs(sort));
 });
 
+router.get('/display-blogs', function (req, res) {
+    res.render('displayBlogs');
+});
+
+router.get('/display-single-blog', (req, res) =>{
+    res.render('displaySingleBlog');
+});
+
 // ROUTE PARAM
-router.get('/singleBlog/:blogId', (req, res) => {
+router.get('/single-blog/:blogId', (req, res) => {
     console.log(req.params);
     const blogId = req.params.blogId;
     //JSON: Javascript Object Notation
     res.json(findBlogId(blogId));
 });
 
-router.get('/postblog', (req, res, next) => {
+router.delete('/delete-blog/:blogId', (req, res) => {
+    const blogId = req.params.blogId;
+    deleteBlogById(blogId)
+    res.json('Successfully Deleted');
+    console.log(blogPosts);
+});
+
+router.get('/post-blog', (req, res, next) => {
     res.render('postBlog');
 });
 
 router.post('/submit', (req, res) => {
-    res.status(201);
     console.log(req.body);
     blogPosts.push(addBlogPost(req.body));
     console.log(blogPosts);
 });
 
 /* HELPER FUNCTION */
+let deleteBlogById = (id) => {
+    const deletedBlog = blogPosts.filter(blog => blog.id != id);
+    return deletedBlog;
+}
+
 let findBlogId = (id) => {
 
     // ANONYMOUS FUNCTION
