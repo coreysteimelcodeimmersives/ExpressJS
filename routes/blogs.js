@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 var blogs = require("../public/javascripts/sampleBlogs")
-const blogPosts = blogs.blogPosts
+let blogPosts = blogs.blogPosts
 
 /* GET blogs listing. */
 router.get('/', function (req, res, next) {
@@ -52,8 +52,12 @@ router.post('/submit', (req, res) => {
 
 /* HELPER FUNCTION */
 let deleteBlogById = (id) => {
-    const deletedBlog = blogPosts.filter(blog => blog.id != id);
-    return deletedBlog;
+    console.log('id')
+    console.log(id)
+    blogPosts = blogPosts.filter(blog => blog.id != id);
+    console.log('remaining blogs')
+    console.log(blogPosts)
+    return blogPosts;
 }
 
 let findBlogId = (id) => {
