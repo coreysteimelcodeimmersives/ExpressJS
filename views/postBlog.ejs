@@ -1,24 +1,65 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script>
-      $(document).ready(function () {
-        var title, text, author;
-        $("#submit").click(function () {
-          title = $("#title").val();
-          text = $("#text").val();
-          author = $("#author").val();
-          $.post(
-            "http://localhost:4000/blogs/submit",
-            { title: title, text: text, author: author }
-          );
+        $(document).ready(function () {
+            jQuery.each(["put", "delete"], function (i, method) {
+                jQuery[method] = function (url, data, callback, type) {
+                    if (jQuery.isFunction(data)) {
+                        type = type || callback;
+                        callback = data;
+                        data = undefined;
+                    }
+
+                    return jQuery.ajax({
+                        url: url,
+                        type: method,
+                        dataType: type,
+                        data: data,
+                        success: callback
+                    });
+                };
+            });
+            var title, text, author, id;
+            $("#submit").click(function () {
+                title = $("#title").val();
+                text = $("#text").val();
+                author = $("#author").val();
+                $.post(
+                    "http://localhost:4000/blogs/submit", {
+                        title: title,
+                        text: text,
+                        author: author,
+                    }
+                );
+            });
+            $('#update').click(function () {
+                title = $("#title").val();
+                text = $("#text").val();
+                author = $("#author").val();
+                id = $('#id').val();
+                console.log('id: ', id);
+                $.put(
+                    "http://localhost:4000/blogs/update-blog/" + id, {
+                        title: title,
+                        text: text,
+                        author: author,
+                    }
+                );
+            });
         });
-      });
     </script>
-  </head>
-  <body>
+</head>
+
+<body>
     <h1>Add New Blog</h1>
+    <h2>
+        <a href="http://localhost:4000/blogs/display-blogs">Display Blog</a>
+        <a href="http://localhost:4000/blogs/display-single-blog">Display Single Blog</a>
+        <a href="http://localhost:4000/blogs/post-blog">Post Blog</a>
+    </h2>
     <label>Blog Title</label>
     <input id="title" size="40" type="text" />
     <label>Blog Text</label>
@@ -26,5 +67,10 @@
     <label>Blog Author</label>
     <input id="author" size="40" type="text" />
     <input id="submit" type="button" value="Submit" />
-  </body>
+    <br>
+    <label>Blog Id to Update</label>
+    <input id="id" size="40" type="text" />
+    <input type="button" id='update' value='Update'>
+</body>
+
 </html>
