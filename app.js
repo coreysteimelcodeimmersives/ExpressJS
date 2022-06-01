@@ -9,6 +9,9 @@ var usersRouter = require('./routes/users');
 var datetimeRouter = require('./routes/datetime');
 var blogsRouter = require('./routes/blogs');
 
+var {mongoConnect} = require('./mongo.js');
+mongoConnect();
+
 var app = express();
 
 // view engine setup

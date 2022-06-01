@@ -4,18 +4,41 @@ var router = express.Router();
 var blogs = require("../public/javascripts/sampleBlogs")
 let blogPosts = blogs.blogPosts
 
+const {
+    blogsDB
+} = require('../mongo');
+
 /* GET blogs listing. */
-router.get('/', function (req, res, next) {
-    res.render('blogs', {
-        title: 'Blogs'
-    });
+router.get('/', async function (req, res, next) {
+    try {
+        const collection = await blogsDB().collection('posts50');
+        const posts = await collection.find({}).toArray();
+        res.json(posts);
+    } catch (e) {
+        res.status(500).send("Error fetching posts." + e)
+    }
+
 });
 
 // QUERY PARAM
-router.get('/all', function (req, res) {
-    let sort = req.query.sort;
-    const sortedBlogs = sortBlogs(sort);
-    res.json(sortedBlogs);
+router.get('/all', async function (req, res) {
+    try {
+        let field = req.query.field;
+        let order = req.query.order;
+        if (order === "asc") {
+            order = 1;
+        }
+        if (order === "desc") {
+            order = -1
+        }
+        const collection = await blogsDB().collection('posts50');
+        const posts = await collection.find({}).sort({
+            [field]: order
+        }).toArray();
+        res.json(posts);
+    } catch (e) {
+        res.status(500).send("Error fetching posts." + e)
+    }
 });
 
 router.get('/display-blogs', function (req, res) {
@@ -106,19 +129,19 @@ let findBlogId = (id) => {
     return foundBlog;
 };
 
-let sortBlogs = (order) => {
-    if (order === 'asc') {
-        return blogPosts.sort(function (a, b) {
-            return new Date(a.createdAt) - new Date(b.createdAt)
-        })
-    } else if (order === 'desc') {
-        return blogPosts.sort(function (a, b) {
-            return new Date(b.createdAt) - new Date(a.createdAt)
-        });
-    } else {
-        return blogPosts;
-    }
-};
+// let sortBlogs = (order, posts) => {
+//     if (order === 'asc') {
+//         return posts.sort(function (a, b) {
+//             return new Date(a.createdAt) - new Date(b.createdAt)
+//         })
+//     } else if (order === 'desc') {
+//         return posts.sort(function (a, b) {
+//             return new Date(b.createdAt) - new Date(a.createdAt)
+//         });
+//     } else {
+//         return blogPosts;
+//     }
+// };
 
 let addBlogPost = (body) => {
     let blog = {

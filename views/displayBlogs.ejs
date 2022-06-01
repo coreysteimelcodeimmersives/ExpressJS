@@ -6,16 +6,23 @@
     <script>
         $(document).ready(function () {
             var blogs = [];
-            var sortOrder;
+            var field;
+            var order;
             $("#getBlogs").click(function () {
                 $("#blogList").empty();
-                sortOrder = "?sort=" + $("#sortOrder option:selected").val();
-                $.get("http://localhost:4000/blogs/all" + sortOrder, function (blogs) {
+                field = "?field=" + $("#fieldForm option:selected").val();
+                order = "&order=" + $("#orderForm option:selected").val();
+                
+                $.get("http://localhost:4000/blogs/all" + field + order, function (blogs) {
                     blogs.forEach((blog) => {
                         console.log(blog)
                         $("#blogList").append("<h2>" + blog.title + "</h2>" +
                            "<p style='font-size:18px'>" + blog.text + "</p>" +
-                            "<p style='font-size:12px'>" + blog.author + "</p>" + '<br>');
+                            "<p style='font-size:12px'>" + blog.author + "</p>" + '<br>' +
+                            "<p style='font-size:12px'>" + blog.id + "</p>" + '<br>' +
+                            "<p style='font-size:12px'>" + blog.category + "</p>" + '<br>' +
+                            "<p style='font-size:12px'>" + blog.createdAt + "</p>" + '<br>' +
+                            "<p style='font-size:12px'>" + blog.lastModified + "</p>" + '<br>');
                     });
                 });
             });
@@ -31,9 +38,20 @@
         <a href="http://localhost:4000/blogs/post-blog">Post Blog</a>
     </h2>
     <button id="getBlogs">Get Blogs</button>
-    <label for="sortOrder">Blog Sort Order</label>
-    <form id="sortForm" action="">
-        <select name="sortOrder" id="sortOrder">
+    <label for="fieldForm">Blog Sort Field</label>
+    <form id="fieldForm" action="">
+        <select name="field" id="field">
+            <option value="id">Blog Id</option>
+            <option value="author">Author</option>
+            <option value="title">Title</option>
+            <option value="category">Category</option>
+            <option value="createdAt">Date Created</option>
+            <option value="lastModified">Date Last Modified</option>
+        </select>
+    </form>
+    <label for="orderForm">Blog Sort Order</label>
+    <form id="orderForm" action="">
+        <select name="order" id="order">
             <option value="asc">Ascending</option>
             <option value="desc">Descending</option>
         </select>
