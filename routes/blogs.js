@@ -7,6 +7,9 @@ let blogPosts = blogs.blogPosts
 const {
     blogsDB
 } = require('../mongo');
+const {
+    post
+} = require('../app');
 
 /* GET blogs listing. */
 router.get('/', async function (req, res, next) {
@@ -50,43 +53,93 @@ router.get('/display-single-blog', (req, res) => {
 });
 
 // ROUTE PARAM
-router.get('/single-blog/:blogId', (req, res) => {
-    console.log(req.params);
-    const blogId = req.params.blogId;
-    const foundBlog = findBlogId(blogId)
-    res.json(foundBlog);
+router.get('/single-blog/:blogId', async function (req, res) {
+    try {
+        const blogId = Number(req.params.blogId) - 1;
+        const collection = await blogsDB().collection('posts50');
+        // const foundBlog = await collection.findOne({
+        //     id: blogId
+        // });
+        const blogs = await collection.find({}).toArray();
+        const foundBlog = blogs[blogId];
+        res.json(foundBlog);
+    } catch (error) {
+        res.status(500).send("Error fetching posts." + error)
+    }
+
 });
 
-router.delete('/delete-blog/:blogId', (req, res) => {
-    const blogId = req.params.blogId;
-    const filteredBlogList = generateBlogs(blogPosts, blogId, "filter");
-    saveBlogPosts(filteredBlogList);
-    res.json('Successfully Deleted');
+router.delete('/delete-blog/:blogId', async (req, res) => {
+    try {
+        const blogId = Number(req.params.blogId);
+        const collection = await blogsDB().collection('posts50');
+        const blogToDelete = await collection.findOne({id: blogId});
+        await collection.deleteOne({id: blogId})
+        res.status(200).send('Successfully Deleted')
+    } catch (error) {
+        res.status(500).send("Error deleting blog." + error)
+    }
 });
 
 router.get('/post-blog', (req, res, next) => {
     res.render('postBlog');
 });
 
-router.post('/submit', (req, res) => {
-    blogPosts.push(addBlogPost(req.body));
-    res.json('OK')
+router.post('/submit', async function (req, res) {
+    try {
+        const collection = await blogsDB().collection('posts50');
+        const sortedBlogArr = await collection.find({}).sort({id: 1}).toArray();
+        const lastBlog = sortedBlogArr[sortedBlogArr.length - 1];
+        let blog = req.body;
+        const blogTitle = blog.title ? blog.title : '';
+        const blogText = blog.text ? blog.text : '';
+        const blogAuthor = blog.author ? blog.author : '';
+        const blogCategory = blog.category ? blog.category : '';
+        const today = new Date();
+        const newBlog = {
+            createdAt: today,
+            lastModified: today,
+            title: blogTitle,
+            text: blogText,
+            author: blogAuthor,
+            category: blogCategory,
+            id: Number(lastBlog.id + 1),
+        };
+
+        await collection.insertOne(newBlog);
+        res.status(200).send('Successfully Posted')
+    } catch (error) {
+        res.status(500).send("Error posting blog." + error)
+    }
+
 });
 
-router.put('/update-blog/:blogId', (req, res) => {
-    console.log('hit route')
-    const blogId = req.params.blogId;
-    const title = req.body.title;
-    const text = req.body.text;
-    const author = req.body.author;
-    const updatedBlogData = {
-        title,
-        text,
-        author
+router.put('/update-blog/:blogId', async function (req, res) {
+    try {
+        const collection = await blogsDB().collection('posts50');
+        const blogId = Number(req.params.blogId);
+        const ogBlog = await collection.findOne({id: blogId});
+        let updateBlog = req.body;
+        const blogTitle = updateBlog.title ? updateBlog.title : ogBlog.title;
+        const blogText = updateBlog.text ? updateBlog.text : ogBlog.text;
+        const blogAuthor = updateBlog.author ? updateBlog.author : ogBlog.author;
+        const blogCategory = updateBlog.category ? updateBlog.category : ogBlog.category;
+        updateBlog = {
+            lastModified: new Date(),
+            title: blogTitle,
+            text: blogText,
+            author: blogAuthor,
+            category: blogCategory,
+        };
+        await collection.updateOne({
+            id: blogId
+        }, {
+            $set: updateBlog
+        });
+        res.status(200).send('Successfully Updated')
+    } catch (error) {
+        res.status(500).send("Error updating blog." + error)
     }
-    const updatedBlogList = generateBlogs(blogPosts, blogId, "update", updatedBlogData);
-    saveBlogPosts(updatedBlogList);
-    res.json('OK');
 })
 
 /* HELPER FUNCTION */
