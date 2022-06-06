@@ -4,37 +4,52 @@
 <head>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script>
+        let displayBlogs = function (blogs) {
+            blogs.forEach((blog) => {
+                console.log(blog)
+                $("#blogList").append("<h2>" + blog.title + "</h2>" +
+                    "<p style='font-size:18px'>" + blog.text + "</p>" +
+                    "<p style='font-size:12px'>" + blog.author + "</p>" + '<br>' +
+                    "<p style='font-size:12px'>" + blog.id + "</p>" + '<br>' +
+                    "<p style='font-size:12px'>" + blog.category + "</p>" + '<br>' +
+                    "<p style='font-size:12px'>" + blog.createdAt + "</p>" + '<br>' +
+                    "<p style='font-size:12px'>" + blog.lastModified + "</p>" + '<br>');
+            });
+        };
+
+
         $(document).ready(function () {
 
-            $.get('http://localhost:4000/blogs/all-authors', function(authors){
+            $.get('http://localhost:4000/blogs/all-authors', function (authors) {
                 authors.forEach((author) => {
-                    $('#authorName').append(`<option value=${author}>${author}</option>`)
+                    let noSpaceAuthor = author.replace(" ", "-")
+                    $('#authorName').append(`<option value=${noSpaceAuthor}>${author}</option>`);
                 })
-            })
+            });
 
+            // var blogs = [];
 
-            var blogs = [];
-            var field;
-            var order;
             $("#getBlogs").click(function () {
                 $("#blogList").empty();
-                field = "?field=" + $("#fieldForm option:selected").val();
-                order = "&order=" + $("#orderForm option:selected").val();
-                
+                let field = "?field=" + $("#fieldForm option:selected").val();
+                let order = "&order=" + $("#orderForm option:selected").val();
                 $.get("http://localhost:4000/blogs/all" + field + order, function (blogs) {
-                    blogs.forEach((blog) => {
-                        console.log(blog)
-                        $("#blogList").append("<h2>" + blog.title + "</h2>" +
-                           "<p style='font-size:18px'>" + blog.text + "</p>" +
-                            "<p style='font-size:12px'>" + blog.author + "</p>" + '<br>' +
-                            "<p style='font-size:12px'>" + blog.id + "</p>" + '<br>' +
-                            "<p style='font-size:12px'>" + blog.category + "</p>" + '<br>' +
-                            "<p style='font-size:12px'>" + blog.createdAt + "</p>" + '<br>' +
-                            "<p style='font-size:12px'>" + blog.lastModified + "</p>" + '<br>');
-                    });
+                    displayBlogs(blogs)
                 });
             });
-        });
+
+            $('#getBlogsByAuthor').click(function () {
+                $("#blogList").empty();
+                let author = $('#authorForm option:selected').val();
+                console.log(author);
+                $.get("http://localhost:4000/blogs/blogs-by-author/" + author, function (
+                    blogs) {
+                    displayBlogs(blogs);
+                });
+
+            });
+
+        })
     </script>
 </head>
 
@@ -48,6 +63,7 @@
     <label for="fieldForm">Blog Sort Field</label>
     <form id="fieldForm" action="">
         <select name="field" id="field">
+            <option value="" selected disabled hidden>Select an option</option>
             <option value="id">Blog Id</option>
             <option value="author">Author</option>
             <option value="title">Title</option>
@@ -64,15 +80,21 @@
         </select>
     </form>
     <br>
-    <button id="getBlogs">Get Blogs</button>
+    <button id="getBlogs">Get All Blogs</button>
+    <br>
     <br>
     <label for="authorForm">Get Blogs by Author</label>
     <form id="authorForm">
         <select name="authorName" id="authorName">
-
+            <option value="" selected disabled hidden>Select an option</option>
         </select>
     </form>
+    <br>
+    <button id="getBlogsByAuthor">Get Blogs by Author</button>
+    <br>
+
     <ul id="blogList"></ul>
+    <br>
 </body>
 
 </html>

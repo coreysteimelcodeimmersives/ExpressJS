@@ -24,6 +24,18 @@ router.get('/', async function (req, res, next) {
 });
 
 // QUERY PARAM
+router.get('/all-authors/', async function (req, res) {
+    try {
+        const collection = await blogsDB().collection('posts50');
+        const authors = await collection.distinct('author');
+        console.log(authors);
+        res.json(authors);
+    } catch (e) {
+        res.status(500).send('Error: ' + e);
+    }
+});
+
+
 router.get('/all', async function (req, res) {
     try {
         let field = req.query.field;
@@ -38,6 +50,7 @@ router.get('/all', async function (req, res) {
         const posts = await collection.find({}).sort({
             [field]: order
         }).toArray();
+        console.log(posts)
         res.json(posts);
     } catch (e) {
         res.status(500).send("Error fetching posts." + e)
@@ -53,6 +66,20 @@ router.get('/display-single-blog', (req, res) => {
 });
 
 // ROUTE PARAM
+
+router.get('/blogs-by-author/:author', async (req, res) => {
+    try {
+        let author = req.params.author;
+        console.log('og author ' + author)
+        author = author.replace("-", " ");
+        console.log('what is the author' + author)
+        const blogs = await blogsDB().collection('posts50').find({author: author}).toArray();
+        res.json(blogs);
+    } catch (error) {
+
+    }
+})
+
 router.get('/single-blog/:blogId', async function (req, res) {
     try {
         const blogId = Number(req.params.blogId);
