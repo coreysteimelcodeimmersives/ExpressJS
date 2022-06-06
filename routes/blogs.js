@@ -105,23 +105,14 @@ router.post('/submit', async function (req, res) {
 
         let blog = req.body;
 
-        if (!blog.title || !blog.text || !blog.author || !blog.category) {
-            console.log("if block")
-            let mssg = "To submit a blog please include:<br>"
-            mssg = !blog.title ? mssg += "- a title<br>" : '';
-            mssg = !blog.text ? mssg += "- blog text<br> " : '';
-            mssg = !blog.author ? mssg += "- an author<br> " : '';
-            mssg = !blog.category ? mssg += "- a category<br> " : '';
-            res.send(mssg);
-        } else {
-            blog = {
-                createdAt: new Date(),
-                lastModified: new Date(),
-                id: Number(lastBlog.id + 1),
-            }
-            await collection.insertOne(blog);
-            res.status(200).send('Successfully Posted')
+        blog = {
+            createdAt: new Date(),
+            lastModified: new Date(),
+            id: Number(lastBlog.id + 1),
         }
+        await collection.insertOne(blog);
+        res.status(200).send('Successfully Posted')
+
 
     } catch (error) {
         res.status(500).send("Error posting blog." + error)

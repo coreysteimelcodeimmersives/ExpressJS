@@ -28,54 +28,54 @@
                 text = $("#text").val();
                 author = $("#author").val();
                 category = $('#category').val();
-                $.post(
-                    "http://localhost:4000/blogs/submit", {
-                        title: title,
-                        text: text,
-                        author: author,
-                        category: category
-                    },
-                    function (data) {
-                        if (data === 'missing data') {
-                            let mssg = "To submit a blog please include:<br>";
-                            mssg = (title === "") ? mssg + "- a title<br>" : mssg;
-                            mssg = (text === "") ? mssg + "- blog text<br>" : mssg;
-                            mssg = (author === '') ? mssg + "- an author<br>" : mssg;
-                            mssg = (category === '') ? mssg + "- a category" : mssg;
-                            $('#message').html(mssg)
-                        } else {
+                if (title === '' || text === '' || author === '' || category === '') {
+                    let mssg = "To submit a blog please include:<br>";
+                    mssg = (title === "") ? mssg + "- a title<br>" : mssg;
+                    mssg = (text === "") ? mssg + "- blog text<br>" : mssg;
+                    mssg = (author === '') ? mssg + "- an author<br>" : mssg;
+                    mssg = (category === '') ? mssg + "- a category" : mssg;
+                    $('#message').html(mssg)
+                } else {
+                    $.post(
+                        "http://localhost:4000/blogs/submit", {
+                            title: title,
+                            text: text,
+                            author: author,
+                            category: category
+                        },
+                        function (data) {
                             $("#title").val('')
                             $("#author").val('')
                             $("#category").val('')
                             $("#text").val('')
                             $('#message').html(data)
-                        }
-                    }
-                );
+                        })
+
+                }
             });
-            $('#update').click(function () {
-                title = $("#title").val();
-                text = $("#text").val();
-                author = $("#author").val();
-                category = $('#category').val();
-                id = $('#id').val();
-                $.put(
-                    "http://localhost:4000/blogs/update-blog/" + id, {
-                        title: title,
-                        text: text,
-                        author: author,
-                        category: category
-                    },
-                    function (data) {
-                        $("#title").val('')
-                        $("#author").val('')
-                        $("#category").val('')
-                        $("#text").val('')
-                        $("#id").val('')
-                        $('#message').html(data)
-                    }
-                );
-            });
+        });
+        $('#update').click(function () {
+            title = $("#title").val();
+            text = $("#text").val();
+            author = $("#author").val();
+            category = $('#category').val();
+            id = $('#id').val();
+            $.put(
+                "http://localhost:4000/blogs/update-blog/" + id, {
+                    title: title,
+                    text: text,
+                    author: author,
+                    category: category
+                },
+                function (data) {
+                    $("#title").val('')
+                    $("#author").val('')
+                    $("#category").val('')
+                    $("#text").val('')
+                    $("#id").val('')
+                    $('#message').html(data)
+                }
+            );
         });
     </script>
 </head>

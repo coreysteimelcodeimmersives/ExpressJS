@@ -5,6 +5,14 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script>
         $(document).ready(function () {
+
+            $.get('http://localhost:4000/blogs/all-authors', function(authors){
+                authors.forEach((author) => {
+                    $('#authorName').append(`<option value=${author}>${author}</option>`)
+                })
+            })
+
+
             var blogs = [];
             var field;
             var order;
@@ -37,7 +45,6 @@
         <a href="http://localhost:4000/blogs/display-single-blog">Display Single Blog</a>
         <a href="http://localhost:4000/blogs/post-blog">Post Blog</a>
     </h2>
-    <button id="getBlogs">Get Blogs</button>
     <label for="fieldForm">Blog Sort Field</label>
     <form id="fieldForm" action="">
         <select name="field" id="field">
@@ -54,6 +61,15 @@
         <select name="order" id="order">
             <option value="asc">Ascending</option>
             <option value="desc">Descending</option>
+        </select>
+    </form>
+    <br>
+    <button id="getBlogs">Get Blogs</button>
+    <br>
+    <label for="authorForm">Get Blogs by Author</label>
+    <form id="authorForm">
+        <select name="authorName" id="authorName">
+
         </select>
     </form>
     <ul id="blogList"></ul>
