@@ -34,13 +34,22 @@
                         text: text,
                         author: author,
                         category: category
-                    }, 
+                    },
                     function (data) {
-                        $("#title").val('')
-                        $("#author").val('')
-                        $("#category").val('')
-                        $("#text").val('')
-                        $('#message').html(data)
+                        if (data === 'missing data') {
+                            let mssg = "To submit a blog please include:<br>";
+                            mssg = (title === "") ? mssg + "- a title<br>" : mssg;
+                            mssg = (text === "") ? mssg + "- blog text<br>" : mssg;
+                            mssg = (author === '') ? mssg + "- an author<br>" : mssg;
+                            mssg = (category === '') ? mssg + "- a category" : mssg;
+                            $('#message').html(mssg)
+                        } else {
+                            $("#title").val('')
+                            $("#author").val('')
+                            $("#category").val('')
+                            $("#text").val('')
+                            $('#message').html(data)
+                        }
                     }
                 );
             });
@@ -62,6 +71,7 @@
                         $("#author").val('')
                         $("#category").val('')
                         $("#text").val('')
+                        $("#id").val('')
                         $('#message').html(data)
                     }
                 );
@@ -73,7 +83,7 @@
 <body>
     <h1>Add New Blog</h1>
     <h2>
-        <a href="http://localhost:4000/blogs/display-blogs">Display Blog</a>
+        <a href="http://localhost:4000/blogs/display-blogs">Display Blogs</a>
         <a href="http://localhost:4000/blogs/display-single-blog">Display Single Blog</a>
         <a href="http://localhost:4000/blogs/post-blog">Post Blog</a>
     </h2>

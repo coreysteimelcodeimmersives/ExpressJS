@@ -31,7 +31,7 @@
                         $("#blogTitle").html(blog.title)
                         $("#blogAuthor").html(blog.author)
                         $("#blogText").html(blog.text)
-                        
+                        $("#displayBlogId").html(blog.id)
                     }
                 );
             });
@@ -43,6 +43,7 @@
                         $("#blogTitle").html('')
                         $("#blogAuthor").html('')
                         $("#blogText").html(data)
+                        $("#displayBlogId").html('')
                     }
                 );
             })
@@ -53,7 +54,7 @@
 <body>
     <h1>Single Blog</h1>
     <h2>
-        <a href="http://localhost:4000/blogs/display-blogs">Display Blog</a>
+        <a href="http://localhost:4000/blogs/display-blogs">Display Blogs</a>
         <a href="http://localhost:4000/blogs/display-single-blog">Display Single Blog</a>
         <a href="http://localhost:4000/blogs/post-blog">Post Blog</a>
     </h2>
@@ -64,6 +65,7 @@
     <button id="getSingleBlog">Get Single Blog</button>
     <button id="deleteSingleBlog">Delete Single Blog</button>
     <div>
+        <p id="displayBlogId"></p>
         <p id="blogTitle"></p>
         <p id="blogAuthor"></p>
         <p id="blogText"></p>
