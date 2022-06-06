@@ -22,7 +22,7 @@
 
             $.get('http://localhost:4000/blogs/all-authors', function (authors) {
                 authors.forEach((author) => {
-                    let noSpaceAuthor = author.replace(" ", "-")
+                    let noSpaceAuthor = author.replaceAll(" ", "-")
                     $('#authorName').append(`<option value=${noSpaceAuthor}>${author}</option>`);
                 })
             });

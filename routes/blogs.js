@@ -71,7 +71,7 @@ router.get('/blogs-by-author/:author', async (req, res) => {
     try {
         let author = req.params.author;
         console.log('og author ' + author)
-        author = author.replace("-", " ");
+        author = author.replaceAll("-", " ");
         console.log('what is the author' + author)
         const blogs = await blogsDB().collection('posts50').find({author: author}).toArray();
         res.json(blogs);
