@@ -28,7 +28,6 @@ router.get('/all-authors/', async function (req, res) {
     try {
         const collection = await blogsDB().collection('posts50');
         const authors = await collection.distinct('author');
-        console.log(authors);
         res.json(authors);
     } catch (e) {
         res.status(500).send('Error: ' + e);
@@ -50,7 +49,6 @@ router.get('/all', async function (req, res) {
         const posts = await collection.find({}).sort({
             [field]: order
         }).toArray();
-        console.log(posts)
         res.json(posts);
     } catch (e) {
         res.status(500).send("Error fetching posts." + e)
@@ -70,9 +68,7 @@ router.get('/display-single-blog', (req, res) => {
 router.get('/blogs-by-author/:author', async (req, res) => {
     try {
         let author = req.params.author;
-        console.log('og author ' + author)
         author = author.replaceAll("-", " ");
-        console.log('what is the author' + author)
         const blogs = await blogsDB().collection('posts50').find({author: author}).toArray();
         res.json(blogs);
     } catch (error) {
@@ -109,10 +105,16 @@ router.delete('/delete-blog/:blogId', async (req, res) => {
     try {
         const blogId = Number(req.params.blogId);
         const collection = await blogsDB().collection('posts50');
-        await collection.deleteOne({
+        const blogToDelete = await collection.deleteOne({
             id: blogId
         })
-        res.status(200).send('Successfully Deleted')
+        console.log(blogToDelete.deletedCount)
+        if (blogToDelete.deletedCount === 1){
+            res.send('Successfully Deleted').status(200)
+        } else {
+            res.send('This blog does not exist.').status(204)
+        }
+        
     } catch (error) {
         res.status(500).send("Error deleting blog." + error)
     }
@@ -133,6 +135,7 @@ router.post('/submit', async function (req, res) {
         let blog = req.body;
 
         blog = {
+            ...blog,
             createdAt: new Date(),
             lastModified: new Date(),
             id: Number(lastBlog.id + 1),
@@ -155,7 +158,7 @@ router.put('/update-blog/:blogId', async function (req, res) {
             id: blogId
         });
         if (!ogBlog) {
-            res.send('Blog Id: ' + blogId + " does not exist.")
+            res.send("does not exist").status(204);
         } else {
             let updateBlog = req.body;
             const blogTitle = updateBlog.title ? updateBlog.title : ogBlog.title;
@@ -163,6 +166,7 @@ router.put('/update-blog/:blogId', async function (req, res) {
             const blogAuthor = updateBlog.author ? updateBlog.author : ogBlog.author;
             const blogCategory = updateBlog.category ? updateBlog.category : ogBlog.category;
             updateBlog = {
+                ...ogBlog,
                 lastModified: new Date(),
                 title: blogTitle,
                 text: blogText,

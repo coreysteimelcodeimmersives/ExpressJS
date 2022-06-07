@@ -25,27 +25,38 @@
             var blogId;
             $("#getSingleBlog").click(function () {
                 blogId = $("#blogId").val();
-                $.get(
-                    "http://localhost:4000/blogs/single-blog/" + blogId,
-                    function (blog) {
-                        $("#blogTitle").html(blog.title)
-                        $("#blogAuthor").html(blog.author)
-                        $("#blogText").html(blog.text)
-                        $("#displayBlogId").html(blog.id)
-                    }
-                );
+                if (!blogId) {
+                    $("#blogText").html('Please enter a Blog Id.');
+                } else {
+                    $.get(
+                        "http://localhost:4000/blogs/single-blog/" + blogId,
+                        function (blog) {
+                            $("#blogTitle").html(blog.title)
+                            $("#blogAuthor").html(blog.author)
+                            $("#blogText").html(blog.text)
+                            $("#displayBlogId").html(blog.id)
+                        }
+                    );
+
+                }
             });
             $("#deleteSingleBlog").click(function () {
+
                 blogId = $("#blogId").val();
-                $.delete(
-                    "http://localhost:4000/blogs/delete-blog/" + blogId,
-                    function (data) {
-                        $("#blogTitle").html('')
-                        $("#blogAuthor").html('')
-                        $("#blogText").html(data)
-                        $("#displayBlogId").html('')
-                    }
-                );
+
+                if (!blogId) {
+                    $("#blogText").html('Please enter a Blog Id.');
+                } else {
+                    $.delete(
+                        "http://localhost:4000/blogs/delete-blog/" + blogId,
+                        function (data) {
+                            $("#blogTitle").html('')
+                            $("#blogAuthor").html('')
+                            $("#blogText").html(data)
+                            $("#displayBlogId").html('')
+                        }
+                    );
+                }
             })
         });
     </script>
